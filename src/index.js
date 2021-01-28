@@ -1,29 +1,29 @@
-const { prisma } = require("./generated/prisma-client");
-const { GraphQLServer } = require("graphql-yoga");
+import React from "react";
+import ReactDOM from "react-dom";
 
-// resolvers
-const Query = require("./resolvers/Query");
-const User = require("./resolvers/User");
-const Mutation = require("./resolvers/Mutation");
-const Link = require("./resolvers/Link");
-const Subscription = require('./resolvers/Subscription');
-const Vote = require('./resolvers/Vote');
+// theme
+import { ThemeProvider } from "emotion-theming";
+import theme from "@rebass/preset";
 
-const resolvers = {
-  Query,
-  Mutation,
-  User,
-  Link,
-  Subscription,
-  Vote
-};
+// apollo
+import ApolloClient from "apollo-boost";
+import { ApolloProvider } from "react-apollo";
 
-const server = new GraphQLServer({
-  typeDefs: "./src/schema.graphql",
-  resolvers,
-  context: request => {
-    return { ...request, prisma };
-  }
+import App from "./App";
+
+const client = new ApolloClient({
+  uri: "http://localhost:4000",
 });
 
-server.start(() => console.log(`Server is running on http://localhost:4000`));
+console.log('client', client);
+
+ReactDOM.render(
+  <ApolloProvider client={client}>
+    <ThemeProvider theme={theme}>
+      <App />
+    </ThemeProvider>
+  </ApolloProvider>,
+  document.getElementById("root")
+);
+
+export default client;
